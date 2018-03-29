@@ -19,28 +19,28 @@ public class Gameplay  extends JPanel implements KeyListener,ActionListener{ //t
 	
 	private int totalBricks = 21; //toplam kýrýlmasý gereken 21 tuðla vardýr
 	
-	private Timer timer;
-	private int delay = 8;
+	private Timer timer;//Timer için pakete ekledik
+	private int delay = 8;//topun hýzý
 	
-	private int playerX = 310;
+	private int playerX = 310;//Top ile yeþýl çizgi arasýndaki baþlangýç pozisyonu
 	
-	private int ballposX = 120;
-	private int ballposY = 350;
-	private int ballXdir = -1;
-	private int ballYdir = -2;
+	private int ballposX = 120;//topun X yönündeki baþlangýçý 
+	private int ballposY = 350;//topun Y yönündeki baþlangýçý
+	private int ballXdir = -1;//topun X yönünü ayarlamak için
+	private int ballYdir = -2;//topun Y yönünü ayarlamak için
 	
 	private MapGenerator map;
 	
-	public Gameplay() {
+	public Gameplay() {  //tugla bilgilerini giricez
 		map=new MapGenerator(3,7); //tuðla görünümü 3 sütun 7 satýrdýr
-		addKeyListener(this);
+		addKeyListener(this);//anahtar dinleyici eklemek
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
 		timer = new Timer(delay,this);
 		timer.start();
 	}
 	public void paint(Graphics g) {
-		//oyun arka rengi ve özellikleri
+		//oyun arka rengi ve özellikleri (x,y,width,hight)
 		g.setColor(Color.black); 
 		g.fillRect(1, 1, 692, 592);
 		
@@ -58,14 +58,16 @@ public class Gameplay  extends JPanel implements KeyListener,ActionListener{ //t
 		g.setFont(new Font("serif",Font.BOLD,25));
 		g.drawString(""+score, 590, 30);
 		
-		//alttaki yeþil çizgimiz
+		//alttaki yeþil çizgimizin özelliði
 		g.setColor(Color.green);
 		g.fillRect(playerX, 550, 100, 8);
 		
-		//top özelliklerimiz
+		//top özellikleri
 		g.setColor(Color.yellow);
 		g.fillOval(ballposX, ballposY, 20, 20);
 		
+		
+		//bu if koþulunda oyunu oynadýkdan sonra kazanma sonucunda çýkan mesaj kýsmý
 		if(totalBricks <=0) {
 			play=false;
 			ballXdir=0;
@@ -76,10 +78,11 @@ public class Gameplay  extends JPanel implements KeyListener,ActionListener{ //t
 			
 			g.setFont(new Font("serif",Font.BOLD,30));
 			g.drawString("Oyunu Kazandýnýz", 230, 350);
-			//bu if bloðunda oyunu oynadýkdan sonra kazanma sonucunda çýkan mesaj kýsmý
+			
 		}
 		
-		if(ballposY >570) {
+		//bu if koþulunda da oyunu oynadýkdan sonra kaybetme sonucunda çýkan mesaj kýsmý
+		if(ballposY >570) { 
 			play=false;
 			ballXdir=0;
 			ballYdir=0;
@@ -89,7 +92,7 @@ public class Gameplay  extends JPanel implements KeyListener,ActionListener{ //t
 			
 			g.setFont(new Font("serif",Font.BOLD,30));
 			g.drawString("Oyunu Kaybettiniz", 230, 350);
-			//bu if bloðunda oyunu oynadýkdan sonra kaybetme sonucunda çýkan mesaj kýsmý
+			
 		}
 		
 		g.dispose();
@@ -98,10 +101,10 @@ public class Gameplay  extends JPanel implements KeyListener,ActionListener{ //t
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		timer.start();
-		if(play) {
-			if(new Rectangle(ballposX,ballposY, 20, 20).intersects(new Rectangle(playerX, 550, 100, 8))) {
-				ballYdir = -ballYdir;
+		timer.start(); //oyunu baþlatýyor.
+		if(play) {  //topun var olup olmadýðýný algýlýyor.
+			if(new Rectangle(ballposX,ballposY, 20, 20).intersects(new Rectangle(playerX, 550, 100, 8))) { //topun xy yönünde yeþil çizginin kesiþmesi
+				ballYdir = -ballYdir; // topun y yönüne gidiyorsa tekrar y yönünde geri dönüyor
 			}
 			A: for(int i=0; i<map.map.length;i++) {
 				for(int j=0;j<map.map[0].length; j++) {
@@ -115,12 +118,13 @@ public class Gameplay  extends JPanel implements KeyListener,ActionListener{ //t
 						Rectangle ballRect = new Rectangle(ballposX,ballposY,20,20);
 						Rectangle brickRect  =  rect;
 						
-						if(ballRect.intersects(brickRect)) {
+						if(ballRect.intersects(brickRect)) { // topun tuðlayla kesiþtiði zamanki her tuðla için 5 score arttýrýyo
+						
 							map.setBrickValue(0, i, j);
 							totalBricks--;
 							score+=5;
 							
-							if(ballposX + 19 <= brickRect.x || ballposX + 1>=brickRect.x+brickRect.width) {
+							if(ballposX + 19 <= brickRect.x || ballposX + 1>=brickRect.x+brickRect.width) {     	
 								ballXdir = -ballXdir;
 							}else {
 								ballYdir = -ballYdir;
@@ -130,7 +134,7 @@ public class Gameplay  extends JPanel implements KeyListener,ActionListener{ //t
 					}
 				}
 			}
-			
+			//topun pozisyonlarýný belirtiyor
 			ballposX += ballXdir;
 			ballposY += ballYdir;
 			if(ballposX < 0) {
@@ -174,6 +178,7 @@ public class Gameplay  extends JPanel implements KeyListener,ActionListener{ //t
 		}
         if(e.getKeyCode() == KeyEvent.VK_ENTER) {
         	if(play) {
+        		play=true;
         		ballposX = 120;
         		ballposY = 350;
         		ballXdir = -1;
@@ -188,11 +193,11 @@ public class Gameplay  extends JPanel implements KeyListener,ActionListener{ //t
         }
 		
 	}	
-   public void moveRight() {
+   public void moveRight() { // sað tarafa hareket ettirme
 	   play = true;
 	   playerX+=20;
    }
-   public void moveLeft() {
+   public void moveLeft() { //sol tarafa hareket ettirme
 	   play = true;
 	   playerX-=20;
    }
